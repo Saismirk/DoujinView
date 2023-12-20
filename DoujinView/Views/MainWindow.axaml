@@ -1,0 +1,56 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:DoujinView.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="DoujinView.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/doujinview-logo.ico"
+        Title="DoujinView"
+        Name="MainPanel"
+        CanResize="True"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="40">
+
+    <Window.KeyBindings>
+        <KeyBinding Command="{CompiledBinding NextPageCommand}" Gesture="Space" />
+        <KeyBinding Command="{CompiledBinding NextPageCommand}" Gesture="Left" />
+        <KeyBinding Command="{CompiledBinding NextPageJumpCommand}" Gesture="Ctrl+Left" />
+        <KeyBinding Command="{CompiledBinding PreviousPageCommand}" Gesture="Right" />
+        <KeyBinding Command="{CompiledBinding PreviousPageJumpCommand}" Gesture="Ctrl+Right" />
+        <KeyBinding Command="{CompiledBinding QuitApplicationCommand}" Gesture="Escape" />
+        <KeyBinding Command="{CompiledBinding OpenFileCommand}" Gesture="L" />
+        <KeyBinding Command="{CompiledBinding OpenNextFileCommand}" Gesture="K" />
+        <KeyBinding Command="{CompiledBinding OpenPreviousFileCommand}" Gesture="J" />
+        <KeyBinding Command="{CompiledBinding ToggleFullScreenCommand}" Gesture="Alt+Enter" />
+    </Window.KeyBindings>
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+    <Panel PointerWheelChanged="OnMouseWheelChanged">
+        <Grid RowDefinitions="Auto,*">
+            <Menu Grid.Row="0" Width="100" HorizontalAlignment="Left" Name="Menu">
+                <MenuItem Header="File" Margin="20,0">
+                </MenuItem>
+            </Menu>
+            <Label Grid.Row="0" Name="AppHeader" IsHitTestVisible="False" Content="{CompiledBinding AppHeader, Mode=OneWay}"
+                   Foreground="Beige"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Viewbox Stretch="Uniform" StretchDirection="Both" HorizontalAlignment="Center" Margin="-1">
+                    <Image Name="NextImage" Margin="-1"/>
+                </Viewbox>
+                <Viewbox Stretch="Uniform" StretchDirection="Both" HorizontalAlignment="Center" Margin="-1">
+                    <Image Name="CurrentImage" Margin="-1"/>
+                </Viewbox>
+            </StackPanel>
+            <Label Name="PageCounter" Grid.Row="1" Content="{CompiledBinding PageCounter, Mode=OneWay}"
+                   HorizontalContentAlignment="Right"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Bottom"
+                   Margin="0,0,10,10" />
+        </Grid>
+    </Panel>
+</Window>
