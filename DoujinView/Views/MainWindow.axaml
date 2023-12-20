@@ -3,6 +3,7 @@
         xmlns:vm="using:DoujinView.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:uc="clr-namespace:DoujinView.Views;assembly=DoujinView"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="DoujinView.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -30,20 +31,32 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
     <Panel PointerWheelChanged="OnMouseWheelChanged">
+        <Panel.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="File">
+                    <MenuItem Header="Load" Command="{CompiledBinding OpenFileCommand}" />
+                    <MenuItem Header="Load Next" Command="{CompiledBinding OpenNextFileCommand}" />
+                    <MenuItem Header="Load Previous" Command="{CompiledBinding OpenPreviousFileCommand}" />
+                </MenuItem>
+                <MenuItem Header="Toggle Fullscreen" Command="{CompiledBinding ToggleFullScreenCommand}" />
+                <MenuItem Header="Settings">
+                    <uc:SettingsControl />
+                </MenuItem>
+                <MenuItem Header="Exit" Command="{CompiledBinding QuitApplicationCommand}"></MenuItem>
+            </ContextMenu>
+        </Panel.ContextMenu>
         <Grid RowDefinitions="Auto,*">
             <Menu Grid.Row="0" Width="100" HorizontalAlignment="Left" Name="Menu">
-                <MenuItem Header="File" Margin="20,0">
-                </MenuItem>
             </Menu>
             <Label Grid.Row="0" Name="AppHeader" IsHitTestVisible="False" Content="{CompiledBinding AppHeader, Mode=OneWay}"
                    Foreground="Beige"
                    HorizontalAlignment="Center" VerticalAlignment="Center" />
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Viewbox Stretch="Uniform" StretchDirection="Both" HorizontalAlignment="Center" Margin="-1">
-                    <Image Name="NextImage" Margin="-1"/>
+                    <Image Name="NextImage" Margin="-1" />
                 </Viewbox>
                 <Viewbox Stretch="Uniform" StretchDirection="Both" HorizontalAlignment="Center" Margin="-1">
-                    <Image Name="CurrentImage" Margin="-1"/>
+                    <Image Name="CurrentImage" Margin="-1" />
                 </Viewbox>
             </StackPanel>
             <Label Name="PageCounter" Grid.Row="1" Content="{CompiledBinding PageCounter, Mode=OneWay}"

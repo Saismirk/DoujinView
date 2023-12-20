@@ -5,6 +5,10 @@
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
+        <TrimUnusedDependencies>true</TrimUnusedDependencies>
+        <PublishTrimmed>true</PublishTrimmed>
+        <PublishReadyToRun>true</PublishReadyToRun>
+        <PublishSingleFile>true</PublishSingleFile>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     </PropertyGroup>
 
@@ -24,5 +28,6 @@
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0" />
         <PackageReference Include="CSharpFunctionalExtensions" Version="2.40.3" />
         <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
+        <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
     </ItemGroup>
 </Project>

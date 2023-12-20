@@ -13,6 +13,10 @@ public partial class MainWindow : Window {
     public MainWindow() {
         InitializeComponent();
         AttachFullScreenHandler();
+        
+        if (Settings.WindowState.Value == (int)WindowState.FullScreen) {
+            ToggleFullScreen();
+        }
     }
 
     public void UpdateCurrentPage(Bitmap? bitmap) {
@@ -66,6 +70,7 @@ public partial class MainWindow : Window {
         AppHeader.IsVisible = isFullScreen;
         Menu.IsVisible = isFullScreen;
         ExtendClientAreaToDecorationsHint = isFullScreen;
+        Settings.WindowState.Value = (int)WindowState;
     }
 
     void AttachFullScreenHandler() {

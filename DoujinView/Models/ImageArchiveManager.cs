@@ -28,11 +28,14 @@ public static class ImageArchiveManager {
 
     public static async Task Initialize(string path) {
         if (string.IsNullOrEmpty(path) || !Path.Exists(path)) return;
-
+        
+        App.PathArg = path;
         Console.WriteLine($"Loading {path}...");
         try {
             _archive = ZipFile.Open(path, ZipArchiveMode.Read).Entries
                               .Where(entry => entry.IsImage())
+                              .OrderBy(entry => entry.Name.Length)
+                              .ThenBy(entry => entry.Name)
                               .ToArray();
         }
         catch (Exception e) {
@@ -42,19 +45,24 @@ public static class ImageArchiveManager {
 
         ClearImageBuffer();
         CurrentPageIndex = 0;
+        App.SaveToAppConfiguration("LastOpenedFilePath", path);
         await UpdateImageBufferToNext();
     }
 
     public static async Task OpenNextFile() {
         if (string.IsNullOrEmpty(App.PathArg) || !Path.Exists(App.PathArg)) return;
-        var files = Directory.GetFiles(Path.GetDirectoryName(App.PathArg) ?? string.Empty)
-                             .Where(file => file.EndsWith(".zip") || file.EndsWith(".cbr") || file.EndsWith(".cbz"))
-                             .ToArray();
+        var files = GetArchives();
         var index = Array.IndexOf(files, App.PathArg);
         if (index < files.Length - 1) {
             App.PathArg = files[index + 1];
             await Initialize(App.PathArg);
         }
+    }
+
+    private static string[] GetArchives() {
+        return Directory.GetFiles(Path.GetDirectoryName(App.PathArg) ?? string.Empty)
+            .Where(file => file.EndsWith(".zip") || file.EndsWith(".cbr") || file.EndsWith(".cbz"))
+            .ToArray();
     }
 
     public static async void OpenPreviousFile() {
