@@ -1,0 +1,60 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- Add Styles Here -->
+    <Style Selector="Button.menu /template/ ContentPresenter">
+        <Setter Property="CornerRadius" Value="0,0,16,0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="#171717" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="Width" Value="36" />
+    </Style>
+
+    <Style Selector="Image.menu:pointerover /template/ ContentPresenter" >
+        <Setter Property="Background" Value="#171717" />
+    </Style>
+    
+    <Style Selector="Image.menu">
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="ScaleTransform.ScaleX" Duration="0:0:0.4" />
+                <DoubleTransition Property="ScaleTransform.ScaleY" Duration="0:0:0.4" />
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    <Style Selector="Image.menu:pointerover">
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <ScaleTransform ScaleX="1.25" ScaleY="1.25" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <Style Selector="TabControl">
+        <Setter Property="Transitions">
+            <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.1" Delay="0:0:0.1" />
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    <Style Selector="CheckBox.setting">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="Margin" Value="5"/>
+    </Style>
+    
+    <Style Selector="TextBlock.property">
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+    </Style>
+</Styles>
