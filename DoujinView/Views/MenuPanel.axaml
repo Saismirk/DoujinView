@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:DoujinView.ViewModels"
+             xmlns:models="clr-namespace:DoujinView.Models;assembly=DoujinView"
+             xmlns:uc="clr-namespace:DoujinView.Views;assembly=DoujinView"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="DoujinView.Views.MenuPanel"
+             x:DataType="viewModels:MainWindowViewModel">
+    
+    <UserControl.Resources>
+        <models:BoolToDoubleConverter x:Key="BoolToDoubleConverter" />
+    </UserControl.Resources>
+    
+    <TabControl Opacity="{Binding IsPaneOpen, Converter={StaticResource BoolToDoubleConverter}, Mode=OneWay}"
+                IsEnabled="{Binding IsPaneOpen, Mode=OneWay}">
+        <TabItem Header="Settings" FontSize="12">
+            <StackPanel>
+                <uc:SettingsControl HorizontalAlignment="Left"/>
+            </StackPanel>
+        </TabItem>
+        <TabItem Header="Properties" FontSize="12">
+            <StackPanel>
+                <uc:Properties/>
+            </StackPanel>
+        </TabItem>
+    </TabControl>
+</UserControl>

@@ -13,7 +13,7 @@ public partial class MainWindow : Window {
     public MainWindow() {
         InitializeComponent();
         AttachFullScreenHandler();
-        
+
         if (Settings.WindowState.Value == (int)WindowState.FullScreen) {
             ToggleFullScreen();
         }
@@ -28,9 +28,9 @@ public partial class MainWindow : Window {
         CurrentImage.Source = bitmap;
         var ratio = (float)bitmap.PixelSize.Width / bitmap.PixelSize.Height;
         FitImageToWindow(CurrentImage, ratio);
-        MainPanel.Background = new SolidColorBrush(ZipArchiveEntryExtensions.MainColor);
-        AppHeader.Foreground = new SolidColorBrush(ZipArchiveEntryExtensions.HeaderColor);
-        PageCounter.Foreground = new SolidColorBrush(ZipArchiveEntryExtensions.HeaderColor);
+        MainPanel.Background = new SolidColorBrush(ImageArchiveManager.MainColor);
+        AppHeader.Foreground = new SolidColorBrush(ImageArchiveManager.HeaderColor);
+        PageCounter.Foreground = new SolidColorBrush(ImageArchiveManager.HeaderColor);
         NextImage.IsVisible = ratio < 1;
     }
 
@@ -53,12 +53,11 @@ public partial class MainWindow : Window {
         image.Width = Height * ratio;
     }
 
-    void OnMouseWheelChanged(object sender, PointerWheelEventArgs e) {
+    async void OnMouseWheelChanged(object sender, PointerWheelEventArgs e) {
         if (e.Delta.Y > 0) {
-            (DataContext as MainWindowViewModel)?.PreviousPageCommand.Execute(null);
-        }
-        else if (e.Delta.Y < 0) {
-            (DataContext as MainWindowViewModel)?.NextPageCommand.Execute(null);
+            MainWindowViewModel.GoToPreviousPage();
+        } else if (e.Delta.Y < 0) {
+            MainWindowViewModel.GoToNextPage();
         }
 
         e.Handled = true;
@@ -68,7 +67,7 @@ public partial class MainWindow : Window {
         var isFullScreen = WindowState == WindowState.FullScreen;
         WindowState = isFullScreen ? WindowState.Normal : WindowState.FullScreen;
         AppHeader.IsVisible = isFullScreen;
-        Menu.IsVisible = isFullScreen;
+        // Menu.IsVisible = isFullScreen;
         ExtendClientAreaToDecorationsHint = isFullScreen;
         Settings.WindowState.Value = (int)WindowState;
     }

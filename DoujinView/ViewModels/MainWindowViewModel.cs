@@ -1,91 +1,69 @@
-﻿using System;
+﻿#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+using System;
 using Avalonia.Media.Imaging;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Media;
 using CSharpFunctionalExtensions;
 using DoujinView.Models;
 using ReactiveUI;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace DoujinView.ViewModels;
 
-public static class Settings {
-    public const string LAST_OPENED_FILE_PATH = "LastOpenedFilePath";
-    public const string JAPANESE_MODE = "JapaneseMode";
-    public const string WINDOW_STATE = "WindowState";
-
-    public static Setting<string> LastOpenedFilePath { get; set; } = new(LAST_OPENED_FILE_PATH);
-    public static Setting<bool> JapaneseMode { get; set; } = new(JAPANESE_MODE);
-    public static Setting<int> WindowState { get; set; } = new(WINDOW_STATE);
-
-    public static void UpdateSettings() {
-        JapaneseMode?.Update();
-    }
-}
-
-public class Setting<T> : ISetting {
-    private T? _value;
-    public string Key { get; }
-
-    public T? Value {
-        get => _value;
-        set {
-            _value = value;
-            App.SaveToAppConfiguration(Key, value?.ToString() ?? string.Empty);
-        }
-    }
-
-    public Setting(string key) {
-        Key = key;
-        Update();
-    }
-
-    public void Update() {
-        Value = App.GetSetting<T>(Key);
-    }
-}
-
-public interface ISetting {
-    public string Key { get; }
-    public void Update();
-}
-
-public class MainWindowViewModel : ViewModelBase {
+public partial class MainWindowViewModel : ViewModelBase {
     const string APP_NAME = "DoujinView";
 
-    Color _backgroundColor = Color.FromRgb(0, 0, 0);
-    string _appHeader = APP_NAME;
-    string _pageCounter = string.Empty;
+    Color                       _backgroundColor = Color.FromRgb(0, 0, 0);
+    [ObservableProperty] string _appHeader       = APP_NAME;
+    [ObservableProperty] string _pageCounter     = string.Empty;
+    [ObservableProperty] bool   _isPaneOpen      = false;
 
     public static event Action? OnFullScreenToggled;
 
-    public string AppHeader {
-        get => _appHeader;
-        set => this.RaiseAndSetIfChanged(ref _appHeader, value);
-    }
+    static Maybe<Bitmap> CurrentPage    { get; set; }
+    static Maybe<Bitmap> NextPage       { get; set; }
+    static bool          IsImageLoading { get; set; }
 
-    public string PageCounter {
-        get => _pageCounter;
-        set => this.RaiseAndSetIfChanged(ref _pageCounter, value);
-    }
+    [RelayCommand]
+    void TriggerPane() => IsPaneOpen = !IsPaneOpen;
 
-    public static Maybe<Bitmap> CurrentPage { get; set; }
-    public static Maybe<Bitmap> NextPage { get; set; }
-    public static bool IsImageLoading { get; private set; }
+    [RelayCommand]
+    public static void GoToNextPage() => NextImage(isJapaneseMode: Settings.JapaneseMode.Value);
 
-    public ICommand NextPageCommand { get; } = ReactiveCommand.CreateFromTask(async () => await NextImage(isJapaneseMode: Settings.JapaneseMode.Value));
-    public ICommand NextPageJumpCommand { get; } = ReactiveCommand.CreateFromTask(async () => await NextImage(5, Settings.JapaneseMode.Value));
-    public ICommand PreviousPageCommand { get; } = ReactiveCommand.CreateFromTask(async () => await PreviousImage(isJapaneseMode: Settings.JapaneseMode.Value));
-    public ICommand PreviousPageJumpCommand { get; } = ReactiveCommand.CreateFromTask(async () => await PreviousImage(5, Settings.JapaneseMode.Value));
-    public ICommand QuitApplicationCommand { get; } = ReactiveCommand.Create(() => Environment.Exit(0));
-    public ICommand OpenNextFileCommand { get; } = ReactiveCommand.CreateFromTask(async () => await ImageArchiveManager.OpenNextFile());
-    public ICommand OpenPreviousFileCommand { get; } = ReactiveCommand.Create(ImageArchiveManager.OpenPreviousFile);
-    public ICommand ToggleFullScreenCommand { get; } = ReactiveCommand.Create(() => OnFullScreenToggled?.Invoke());
+    [RelayCommand]
+    static void GoToNextPageJump() => NextImage(5, Settings.JapaneseMode.Value);
 
-    public ICommand OpenFileCommand { get; } = ReactiveCommand.CreateFromTask(async () =>
-    {
+    [RelayCommand]
+    static void GoToFirstPage() => PreviousImage(ImageArchiveManager.TotalPages, Settings.JapaneseMode.Value);
+
+    [RelayCommand]
+    public static void GoToPreviousPage() => PreviousImage(isJapaneseMode: Settings.JapaneseMode.Value);
+
+    [RelayCommand]
+    static void GoToPreviousPageJump() => PreviousImage(5, Settings.JapaneseMode.Value);
+
+    [RelayCommand]
+    static void GoToLastPage() => NextImage(ImageArchiveManager.TotalPages, Settings.JapaneseMode.Value);
+
+    [RelayCommand]
+    static void QuitApplication() => Environment.Exit(0);
+
+    [RelayCommand]
+    static void OpenNextFile() => ImageArchiveManager.OpenNextFile();
+
+    [RelayCommand]
+    static void OpenPreviousFile() => ImageArchiveManager.OpenPreviousFile();
+
+    [RelayCommand]
+    static void ToggleFullScreen() => OnFullScreenToggled?.Invoke();
+
+    [RelayCommand]
+    public static void OpenArchiveFolderCommand() => ImageArchiveManager.OpenArchiveFolderAndFocus();
+
+#pragma warning disable CS0618 // Type or member is obsolete
+    public ICommand OpenFileCommand { get; } = ReactiveCommand.CreateFromTask(async () => {
         if (IsImageLoading) return;
         if (App.MainWindow is null) return;
         var dialog = new OpenFileDialog();
@@ -103,36 +81,50 @@ public class MainWindowViewModel : ViewModelBase {
     }
 
     public static async void Initialize() => await ImageArchiveManager.Initialize(string.IsNullOrEmpty(App.PathArg)
-        ? App.GetSetting("LastOpenedFilePath")
-        : App.PathArg);
+                                                                                      ? App.GetSetting("LastOpenedFilePath")
+                                                                                      : App.PathArg);
 
-    public static async Task NextImage(int forwardPages = 1, bool isJapaneseMode = true) {
+    public static async void NextImage(int forwardPages = 1, bool isJapaneseMode = true) {
         if (!isJapaneseMode) {
-            await PreviousImage(forwardPages);
+            PreviousImage(forwardPages);
             return;
         }
 
         if (IsImageLoading) return;
         IsImageLoading = true;
+
+        if (Settings.LoadNextArchive.Value && ImageArchiveManager.CurrentPageNumber == ImageArchiveManager.TotalPages && forwardPages == 1) {
+            await ImageArchiveManager.OpenNextFile();
+            IsImageLoading = false;
+            return;
+        }
+
         ImageArchiveManager.CurrentPageIndex += forwardPages;
         try {
             await ImageArchiveManager.UpdateImageBufferToNext(forwardPages > 1);
         }
         catch (Exception) {
-            ImageArchiveManager.CurrentPageIndex--;
+            Console.WriteLine("Failed to load next image");
         }
 
         IsImageLoading = false;
     }
 
-    public static async Task PreviousImage(int backwardsPages = 1, bool isJapaneseMode = true) {
+    public static async void PreviousImage(int backwardsPages = 1, bool isJapaneseMode = true) {
         if (!isJapaneseMode) {
-            await NextImage(backwardsPages);
+            NextImage(backwardsPages);
             return;
         }
 
         if (IsImageLoading) return;
         IsImageLoading = true;
+
+        if (Settings.LoadNextArchive.Value && ImageArchiveManager.CurrentPageIndex == 0 && backwardsPages == 1) {
+            await ImageArchiveManager.OpenPreviousFile();
+            IsImageLoading = false;
+            return;
+        }
+
         ImageArchiveManager.CurrentPageIndex -= backwardsPages;
         try {
             await ImageArchiveManager.UpdateImageBufferToPrevious(backwardsPages > 1);
@@ -147,23 +139,19 @@ public class MainWindowViewModel : ViewModelBase {
     void LoadCurrentImage() {
         CurrentPage = Maybe<Bitmap>.From(ImageArchiveManager.ImageBuffer[0]!);
         CurrentPage.Match(
-            bitmap => App.MainWindow?.UpdateCurrentPage(bitmap),
-            () => App.MainWindow?.UpdateCurrentPage(null)
-        );
+                          bitmap => App.MainWindow?.UpdateCurrentPage(bitmap),
+                          () => App.MainWindow?.UpdateCurrentPage(null)
+                         );
 
         AppHeader = $"{ImageArchiveManager.ArchiveName} - {ImageArchiveManager.CurrentPageName}";
         PageCounter = $"{ImageArchiveManager.CurrentPageNumber}/{ImageArchiveManager.TotalPages}";
     }
 
-    public void ToggleFullScreen() {
-        OnFullScreenToggled?.Invoke();
-    }
-
     void LoadNextImage() {
         NextPage = Maybe<Bitmap>.From(ImageArchiveManager.ImageBuffer[1]!);
         NextPage.Match(
-            bitmap => App.MainWindow?.UpdateNextPage(bitmap),
-            () => App.MainWindow?.UpdateNextPage(null)
-        );
+                       bitmap => App.MainWindow?.UpdateNextPage(bitmap),
+                       () => App.MainWindow?.UpdateNextPage(null)
+                      );
     }
 }

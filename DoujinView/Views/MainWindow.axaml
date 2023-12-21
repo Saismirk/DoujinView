@@ -4,66 +4,85 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:uc="clr-namespace:DoujinView.Views;assembly=DoujinView"
+        xmlns:models="clr-namespace:DoujinView.Models;assembly=DoujinView"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="DoujinView.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/doujinview-logo.ico"
         Title="DoujinView"
         Name="MainPanel"
+        RequestedThemeVariant="Dark"
         CanResize="True"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaTitleBarHeightHint="40">
-
+        ExtendClientAreaTitleBarHeightHint="40"
+        PointerWheelChanged="OnMouseWheelChanged">
+    
+    <Window.Styles>
+        <StyleInclude Source="/Styles/Style.axaml" />
+    </Window.Styles>
+    
     <Window.KeyBindings>
-        <KeyBinding Command="{CompiledBinding NextPageCommand}" Gesture="Space" />
-        <KeyBinding Command="{CompiledBinding NextPageCommand}" Gesture="Left" />
-        <KeyBinding Command="{CompiledBinding NextPageJumpCommand}" Gesture="Ctrl+Left" />
-        <KeyBinding Command="{CompiledBinding PreviousPageCommand}" Gesture="Right" />
-        <KeyBinding Command="{CompiledBinding PreviousPageJumpCommand}" Gesture="Ctrl+Right" />
+        <KeyBinding Command="{Binding GoToNextPageCommand}" Gesture="Space" />
+        <KeyBinding Command="{CompiledBinding GoToNextPageCommand}" Gesture="Left" />
+        <KeyBinding Command="{CompiledBinding GoToNextPageJumpCommand}" Gesture="Ctrl+Left" />
+        <KeyBinding Command="{CompiledBinding GoToLastPageCommand}" Gesture="End" />
+        <KeyBinding Command="{CompiledBinding GoToPreviousPageCommand}" Gesture="Right" />
+        <KeyBinding Command="{CompiledBinding GoToPreviousPageJumpCommand}" Gesture="Ctrl+Right" />
+        <KeyBinding Command="{CompiledBinding GoToFirstPageCommand}" Gesture="Home" />
         <KeyBinding Command="{CompiledBinding QuitApplicationCommand}" Gesture="Escape" />
         <KeyBinding Command="{CompiledBinding OpenFileCommand}" Gesture="L" />
         <KeyBinding Command="{CompiledBinding OpenNextFileCommand}" Gesture="K" />
         <KeyBinding Command="{CompiledBinding OpenPreviousFileCommand}" Gesture="J" />
+        <KeyBinding Command="{CompiledBinding OpenArchiveFolderCommand}" Gesture="O" />
         <KeyBinding Command="{CompiledBinding ToggleFullScreenCommand}" Gesture="Alt+Enter" />
     </Window.KeyBindings>
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
-    <Panel PointerWheelChanged="OnMouseWheelChanged">
-        <Panel.ContextMenu>
-            <ContextMenu>
-                <MenuItem Header="File">
-                    <MenuItem Header="Load" Command="{CompiledBinding OpenFileCommand}" />
-                    <MenuItem Header="Load Next" Command="{CompiledBinding OpenNextFileCommand}" />
-                    <MenuItem Header="Load Previous" Command="{CompiledBinding OpenPreviousFileCommand}" />
-                </MenuItem>
-                <MenuItem Header="Toggle Fullscreen" Command="{CompiledBinding ToggleFullScreenCommand}" />
-                <MenuItem Header="Settings">
-                    <uc:SettingsControl />
-                </MenuItem>
-                <MenuItem Header="Exit" Command="{CompiledBinding QuitApplicationCommand}"></MenuItem>
-            </ContextMenu>
-        </Panel.ContextMenu>
-        <Grid RowDefinitions="Auto,*">
-            <Menu Grid.Row="0" Width="100" HorizontalAlignment="Left" Name="Menu">
-            </Menu>
-            <Label Grid.Row="0" Name="AppHeader" IsHitTestVisible="False" Content="{CompiledBinding AppHeader, Mode=OneWay}"
-                   Foreground="Beige"
-                   HorizontalAlignment="Center" VerticalAlignment="Center" />
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Viewbox Stretch="Uniform" StretchDirection="Both" HorizontalAlignment="Center" Margin="-1">
-                    <Image Name="NextImage" Margin="-1" />
-                </Viewbox>
-                <Viewbox Stretch="Uniform" StretchDirection="Both" HorizontalAlignment="Center" Margin="-1">
-                    <Image Name="CurrentImage" Margin="-1" />
-                </Viewbox>
-            </StackPanel>
-            <Label Name="PageCounter" Grid.Row="1" Content="{CompiledBinding PageCounter, Mode=OneWay}"
-                   HorizontalContentAlignment="Right"
-                   HorizontalAlignment="Right"
-                   VerticalAlignment="Bottom"
-                   Margin="0,0,10,10" />
-        </Grid>
-    </Panel>
+    <SplitView IsPaneOpen="{CompiledBinding IsPaneOpen}" 
+               DisplayMode="CompactInline" OpenPaneLength="200" CompactPaneLength="0">
+        <SplitView.Pane>
+            <uc:MenuPanel/>
+        </SplitView.Pane>
+        
+        <SplitView.Content>
+            <Panel>
+                <Panel.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="File">
+                            <MenuItem Header="Load" Command="{CompiledBinding OpenFileCommand}" />
+                            <MenuItem Header="Load Next" Command="{CompiledBinding OpenNextFileCommand}" />
+                            <MenuItem Header="Load Previous" Command="{CompiledBinding OpenPreviousFileCommand}" />
+                        </MenuItem>
+                        <MenuItem Header="Toggle Fullscreen" Command="{CompiledBinding ToggleFullScreenCommand}" />
+                        <MenuItem Header="Exit" Command="{CompiledBinding QuitApplicationCommand}"></MenuItem>
+                    </ContextMenu>
+                </Panel.ContextMenu>
+                <Grid RowDefinitions="Auto,*">
+                    <Button Grid.Row="0" HorizontalAlignment="Left"
+                            Classes="menu"
+                            Command="{Binding TriggerPaneCommand}">
+                        <Image Classes="menu" Source="/Assets/menu_FILL0_wght400_GRAD0_opsz24.png"  Height="20" Width="18" />
+                    </Button>
+                    <Label Grid.Row="0" Name="AppHeader" IsHitTestVisible="False" Content="{CompiledBinding AppHeader, Mode=OneWay}"
+                           Foreground="Beige"
+                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Viewbox Stretch="Uniform" StretchDirection="Both" HorizontalAlignment="Center" Margin="-1">
+                            <Image Name="NextImage" Margin="-1" />
+                        </Viewbox>
+                        <Viewbox Stretch="Uniform" StretchDirection="Both" HorizontalAlignment="Center" Margin="-1">
+                            <Image Name="CurrentImage" Margin="-1" />
+                        </Viewbox>
+                    </StackPanel>
+                    <Label Name="PageCounter" Grid.Row="1" Content="{CompiledBinding PageCounter, Mode=OneWay}"
+                           HorizontalContentAlignment="Right"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Bottom"
+                           Margin="0,0,10,10" />
+                </Grid>
+            </Panel>
+        </SplitView.Content>
+    </SplitView>
 </Window>

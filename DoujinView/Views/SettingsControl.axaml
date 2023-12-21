@@ -6,6 +6,11 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="DoujinView.Views.SettingsControl"
              x:DataType="viewModels:SettingsViewModel">
-    
-    <CheckBox IsChecked="{CompiledBinding  JapaneseMode}">Japanese Mode</CheckBox>
+
+    <StackPanel>
+        <CheckBox Classes="setting" IsChecked="{CompiledBinding  JapaneseModeSetting}">Japanese Mode</CheckBox>
+        <CheckBox Classes="setting" IsChecked="{CompiledBinding  ResumeLastArchiveSetting}">Resume Last Opened Archive</CheckBox>
+        <CheckBox Classes="setting" IsChecked="{CompiledBinding  ResumeLastPageSetting}">Resume Previously Opened Page</CheckBox>
+        <CheckBox Classes="setting" IsChecked="{CompiledBinding  LoadNextArchiveSetting}">Load Next Archive</CheckBox>
+    </StackPanel>
 </UserControl>
