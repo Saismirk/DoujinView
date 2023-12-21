@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="clr-namespace:DoujinView.Models;assembly=DoujinView"
+             xmlns:viewModels="clr-namespace:DoujinView.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="DoujinView.Views.Properties"
+             x:DataType="viewModels:ArchivePropertiesViewModel">
+    <UserControl.Styles>
+        <StyleInclude Source="/Styles/Style.axaml" />
+    </UserControl.Styles>
+
+    <UserControl.Resources>
+        <models:StringToLabelConverter x:Key="StringToLabelConverter" />
+    </UserControl.Resources>
+
+    <StackPanel>
+        <Label Content="Archive" FontSize="12" />
+        <TextBlock Classes="property"
+                   Text="{CompiledBinding ArchiveName}" />
+        <TextBlock Classes="property"
+                   Text="{CompiledBinding ArchiveSize, 
+                   Converter={StaticResource StringToLabelConverter},
+                   ConverterParameter=Size:}" />
+        <TextBlock Classes="property"
+                   Text="{CompiledBinding ArchiveType, 
+                   Converter={StaticResource StringToLabelConverter},
+                   ConverterParameter=Format:}" />
+        <TextBlock Classes="property"
+                   Text="{CompiledBinding ArchivePages, 
+                   Converter={StaticResource StringToLabelConverter},
+                   ConverterParameter=Pages:}" />
+        <Separator Margin="0,10,0,0" />
+        <Label Content="Next Archive" FontSize="10"/>
+        <TextBlock Classes="property"
+                   Text="{CompiledBinding NextArchiveName}" />
+        <Label Content="Previous Archive" FontSize="10"/>
+        <TextBlock Classes="property"
+                   Text="{CompiledBinding PreviousArchiveName}" />
+
+        <Separator Margin="0,10,0,0" />
+        <Label Content="Current Page" FontSize="12" />
+        <TextBlock Classes="property"
+                   Text="{CompiledBinding CurrentPageName}" />
+        <TextBlock Classes="property"
+                   Text="{CompiledBinding CurrentPageSize, 
+                   Converter={StaticResource StringToLabelConverter},
+                   ConverterParameter=Size:}" />
+        <TextBlock Classes="property"
+                   Text="{CompiledBinding CurrentPageNumber,
+                      Converter={StaticResource StringToLabelConverter},
+                     ConverterParameter=Page:}" />
+        <TextBlock Classes="property"
+                   Text="{CompiledBinding CurrentPageDimensions,
+                        Converter={StaticResource StringToLabelConverter},
+                         ConverterParameter=Dimensions:}" />
+    </StackPanel>
+</UserControl>
