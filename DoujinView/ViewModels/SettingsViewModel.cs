@@ -8,6 +8,7 @@ public partial class SettingsViewModel : ViewModelBase {
     [ObservableProperty] bool _resumeLastArchive = Settings.ResumeLastArchive.Value;
     [ObservableProperty] bool _resumeLastPage    = Settings.ResumeLastPage.Value;
     [ObservableProperty] bool _loadNextArchive   = Settings.LoadNextArchive.Value;
+    [ObservableProperty] bool _creationOrder     = Settings.CreationOrder.Value;
 
     public bool JapaneseModeSetting {
         get => JapaneseMode;
@@ -15,6 +16,15 @@ public partial class SettingsViewModel : ViewModelBase {
             Settings.JapaneseMode.Value = value;
             Settings.JapaneseMode.Update();
             JapaneseMode = value;
+        }
+    }
+
+    public bool CreationOrderSetting {
+        get => CreationOrder;
+        set {
+            Settings.CreationOrder.Value = value;
+            Settings.CreationOrder.Update();
+            CreationOrder = value;
         }
     }
 

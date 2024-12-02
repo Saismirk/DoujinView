@@ -12,5 +12,6 @@
         <CheckBox Classes="setting" IsChecked="{CompiledBinding  ResumeLastArchiveSetting}">Resume Last Opened Archive</CheckBox>
         <CheckBox Classes="setting" IsChecked="{CompiledBinding  ResumeLastPageSetting}">Resume Previously Opened Page</CheckBox>
         <CheckBox Classes="setting" IsChecked="{CompiledBinding  LoadNextArchiveSetting}">Load Next Archive</CheckBox>
+        <CheckBox Classes="setting" IsChecked="{CompiledBinding  CreationOrderSetting}">Sort By Creation Date</CheckBox>
     </StackPanel>
 </UserControl>

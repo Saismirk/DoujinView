@@ -55,5 +55,11 @@
                    Text="{CompiledBinding CurrentPageDimensions,
                         Converter={StaticResource StringToLabelConverter},
                          ConverterParameter=Dimensions:}" />
+        
+        <Separator Margin="0,10,0,0" />
+        <Image Source="{Binding CoverUrlBitmap}"
+               Width="200"
+               Height="200"
+               Name="Cover"/>
     </StackPanel>
 </UserControl>

@@ -7,6 +7,7 @@ public static class Settings {
     public static Setting<bool>   ResumeLastPage      { get; set; } = new("ResumeLastPage");
     public static Setting<bool>   LoadNextArchive     { get; set; } = new("LoadNextArchive");
     public static Setting<bool>   JapaneseMode        { get; set; } = new("JapaneseMode");
+    public static Setting<bool>   CreationOrder       { get; set; } = new("CreationOrder");
     public static Setting<int>    WindowState         { get; set; } = new("WindowState");
     public static Setting<int>    WindowsPositionX    { get; set; } = new("WindowPosX");
     public static Setting<int>    WindowsPositionY    { get; set; } = new("WindowPosY");

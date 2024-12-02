@@ -45,7 +45,7 @@ public partial class MainWindowViewModel : ViewModelBase {
     static void GoToPreviousPageJump() => PreviousImage(5, Settings.JapaneseMode.Value);
 
     [RelayCommand]
-    static void GoToLastPage() => NextImage(ImageArchiveManager.TotalPages, Settings.JapaneseMode.Value);
+    static void GoToLastPage() => NextImage(Math.Max(ImageArchiveManager.TotalPages - 1, 0), Settings.JapaneseMode.Value);
 
     [RelayCommand]
     static void QuitApplication() => Environment.Exit(0);
@@ -60,7 +60,12 @@ public partial class MainWindowViewModel : ViewModelBase {
     static void ToggleFullScreen() => OnFullScreenToggled?.Invoke();
 
     [RelayCommand]
-    public static void OpenArchiveFolderCommand() => ImageArchiveManager.OpenArchiveFolderAndFocus();
+    public static void OpenArchiveFolder() => ImageArchiveManager.OpenArchiveFolderAndFocus();
+
+    [RelayCommand]
+    public static void DeleteArchiveFolder() => ImageArchiveManager.DeleteArchiveFolder();
+
+    static Window? _window;
 
 #pragma warning disable CS0618 // Type or member is obsolete
     public ICommand OpenFileCommand { get; } = ReactiveCommand.CreateFromTask(async () => {
@@ -77,6 +82,7 @@ public partial class MainWindowViewModel : ViewModelBase {
     public MainWindowViewModel() {
         ImageArchiveManager.OnCurrentPageProcessed += LoadCurrentImage;
         ImageArchiveManager.OnNextPageProcessed += LoadNextImage;
+        _window = App.MainWindow;
         Initialize();
     }
 
@@ -101,7 +107,7 @@ public partial class MainWindowViewModel : ViewModelBase {
 
         ImageArchiveManager.CurrentPageIndex += forwardPages;
         try {
-            await ImageArchiveManager.UpdateImageBufferToNext(forwardPages > 1);
+            await ImageArchiveManager.UpdateImageBufferToNext(App.WindowHeight, forwardPages > 1);
         }
         catch (Exception) {
             Console.WriteLine("Failed to load next image");
@@ -127,7 +133,7 @@ public partial class MainWindowViewModel : ViewModelBase {
 
         ImageArchiveManager.CurrentPageIndex -= backwardsPages;
         try {
-            await ImageArchiveManager.UpdateImageBufferToPrevious(backwardsPages > 1);
+            await ImageArchiveManager.UpdateImageBufferToPrevious(App.WindowHeight, backwardsPages > 1);
         }
         catch (Exception) {
             ImageArchiveManager.CurrentPageIndex++;

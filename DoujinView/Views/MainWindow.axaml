@@ -25,15 +25,16 @@
         <KeyBinding Command="{Binding GoToNextPageCommand}" Gesture="Space" />
         <KeyBinding Command="{CompiledBinding GoToNextPageCommand}" Gesture="Left" />
         <KeyBinding Command="{CompiledBinding GoToNextPageJumpCommand}" Gesture="Ctrl+Left" />
-        <KeyBinding Command="{CompiledBinding GoToLastPageCommand}" Gesture="End" />
+        <KeyBinding Command="{CompiledBinding GoToLastPageCommand}" Gesture="PageDown" />
         <KeyBinding Command="{CompiledBinding GoToPreviousPageCommand}" Gesture="Right" />
         <KeyBinding Command="{CompiledBinding GoToPreviousPageJumpCommand}" Gesture="Ctrl+Right" />
-        <KeyBinding Command="{CompiledBinding GoToFirstPageCommand}" Gesture="Home" />
+        <KeyBinding Command="{CompiledBinding GoToFirstPageCommand}" Gesture="PageUp" />
         <KeyBinding Command="{CompiledBinding QuitApplicationCommand}" Gesture="Escape" />
         <KeyBinding Command="{CompiledBinding OpenFileCommand}" Gesture="L" />
         <KeyBinding Command="{CompiledBinding OpenNextFileCommand}" Gesture="K" />
         <KeyBinding Command="{CompiledBinding OpenPreviousFileCommand}" Gesture="J" />
         <KeyBinding Command="{CompiledBinding OpenArchiveFolderCommand}" Gesture="O" />
+        <KeyBinding Command="{CompiledBinding DeleteArchiveFolderCommand}" Gesture="Delete" />
         <KeyBinding Command="{CompiledBinding ToggleFullScreenCommand}" Gesture="Alt+Enter" />
     </Window.KeyBindings>
 

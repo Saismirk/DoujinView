@@ -67,7 +67,6 @@ public partial class MainWindow : Window {
         var isFullScreen = WindowState == WindowState.FullScreen;
         WindowState = isFullScreen ? WindowState.Normal : WindowState.FullScreen;
         AppHeader.IsVisible = isFullScreen;
-        // Menu.IsVisible = isFullScreen;
         ExtendClientAreaToDecorationsHint = isFullScreen;
         Settings.WindowState.Value = (int)WindowState;
     }
