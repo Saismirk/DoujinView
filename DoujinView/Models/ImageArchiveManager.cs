@@ -35,8 +35,9 @@ public static class ImageArchiveManager {
     static          ZipArchiveEntry?[]     _archive          = Array.Empty<ZipArchiveEntry>();
     static          int                    _currentPageIndex = 0;
 
-    public static event Action? OnCurrentPageProcessed;
-    public static event Action? OnNextPageProcessed;
+    public static event Action?      OnCurrentPageProcessed;
+    public static event Action?      OnNextPageProcessed;
+    public static event Action<bool> OnLoadingToggled;
 
     public static int CurrentPageIndex {
         get => _currentPageIndex;
@@ -106,6 +107,7 @@ public static class ImageArchiveManager {
 
     public static async Task OpenNextFile() {
         if (string.IsNullOrEmpty(App.PathArg) || !Path.Exists(App.PathArg)) return;
+        OnLoadingToggled?.Invoke(true);
         var files             = GetArchives();
         var time              = DateTime.UtcNow;
         var currentMatchFound = false;
@@ -131,11 +133,13 @@ public static class ImageArchiveManager {
             }
         }
 
+        OnLoadingToggled?.Invoke(false);
         GC.Collect();
     }
 
     public static async Task OpenPreviousFile() {
         if (string.IsNullOrEmpty(App.PathArg) || !Path.Exists(App.PathArg)) return;
+        OnLoadingToggled?.Invoke(true);
         var files                = GetArchives();
         var time                 = DateTime.UtcNow;
         var previousFile         = string.Empty;
@@ -154,6 +158,7 @@ public static class ImageArchiveManager {
             previousFile = file;
         }
 
+        OnLoadingToggled?.Invoke(false);
         GC.Collect();
     }
 

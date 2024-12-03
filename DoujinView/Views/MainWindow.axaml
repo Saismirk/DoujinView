@@ -8,6 +8,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="DoujinView.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
+        xmlns:li="using:LoadingIndicators.Avalonia"
         Icon="/Assets/doujinview-logo.ico"
         Title="DoujinView"
         Name="MainPanel"
@@ -77,6 +78,10 @@
                             <Image Name="CurrentImage" Margin="-1" />
                         </Viewbox>
                     </StackPanel>
+                    <li:LoadingIndicator Grid.Row="1" IsActive="{Binding IsLoading}" 
+                                         Mode="ArcsRing" 
+                                         SpeedRatio="1.2" 
+                                         Height="150" />
                     <Label Name="PageCounter" Grid.Row="1" Content="{CompiledBinding PageCounter, Mode=OneWay}"
                            HorizontalContentAlignment="Right"
                            HorizontalAlignment="Right"
